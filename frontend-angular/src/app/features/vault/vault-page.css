@@ -1,0 +1,237 @@
+:host {
+  display: block;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  /* Altezza fissa: il bottone che compare o sparisce non sposta ciò che sta sotto. */
+  min-height: var(--control-height);
+}
+
+.title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--text-28);
+  outline: none;
+}
+
+.count {
+  color: var(--color-text-muted);
+  font-size: var(--text-16);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0;
+}
+
+/* Sotto i 576px il bottone occupa tutta la riga, sotto al titolo. */
+.new {
+  flex: 1 1 100%;
+}
+
+@media (min-width: 36rem) {
+  .new {
+    flex: 0 0 auto;
+  }
+}
+
+/* ---- Ricerca: l'elemento protagonista della pagina ---- */
+
+.search {
+  display: flex;
+  align-items: center;
+  height: var(--search-height);
+  margin-top: var(--space-6);
+  background: var(--color-bg);
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius-panel);
+  transition: border-color var(--motion-fast);
+}
+
+.search:focus-within {
+  border-color: var(--color-primary);
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.search-icon {
+  margin-left: var(--space-4);
+}
+
+.search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--space-3);
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: var(--text-16);
+}
+
+.search-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.search-input::-webkit-search-decoration,
+.search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.search-clear {
+  margin-right: var(--space-1);
+}
+
+.search-key {
+  display: none;
+  margin-right: var(--space-4);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-control);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-14);
+  line-height: 1.6;
+}
+
+@media (min-width: 40rem) {
+  .search-input {
+    font-size: var(--text-20);
+  }
+
+  .search-key {
+    display: inline-block;
+  }
+}
+
+/* ---- Filtri a scelta singola ---- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-height);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  font-size: var(--text-14);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background-color var(--motion-fast),
+    border-color var(--motion-fast);
+}
+
+@media (hover: hover) {
+  .chip:hover {
+    border-color: var(--color-text);
+  }
+}
+
+.chip--active {
+  background: var(--color-primary-tint);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ---- Elenco ---- */
+
+.summary {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-14);
+}
+
+.rows {
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.rows > li {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rows--busy {
+  opacity: 0.6;
+  transition: opacity var(--motion-fast);
+}
+
+/* ---- Righe segnaposto: stessa altezza delle righe vere, nessun salto di layout ---- */
+
+.skeleton {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-4);
+  min-height: 4.75rem;
+  padding: var(--space-4) var(--space-2);
+}
+
+.skeleton-block {
+  display: block;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-control);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.skeleton-mono {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.skeleton-line {
+  width: 55%;
+  height: 0.875rem;
+}
+
+.skeleton-line--short {
+  width: 30%;
+  margin-top: var(--space-2);
+}
+
+@keyframes pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+/* ---- Stati: vuoto, nessun risultato, errore ---- */
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  max-width: 28rem;
+  padding: var(--space-12) 0;
+}
+
+.state-title {
+  font-size: var(--text-20);
+  overflow-wrap: anywhere;
+}
+
+.state-text {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,26 @@
+name: propass
+
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: propass-oracle
+    restart: unless-stopped
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_ADMIN_PASSWORD:?imposta ORACLE_ADMIN_PASSWORD nel file .env}
+      ORACLE_DATABASE: ${ORACLE_DATABASE:-PROPASS}
+    ports:
+      # Solo localhost: il DB con le password degli utenti non deve essere visibile in rete
+      - "127.0.0.1:${ORACLE_HOST_PORT:-1522}:1521"
+    volumes:
+      # Nome esplicito: il volume resta riconoscibile e non dipende dal nome della cartella
+      - oracle_data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+
+volumes:
+  oracle_data:
+    name: propass-oracle-free-data

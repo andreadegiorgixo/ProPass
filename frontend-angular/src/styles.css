@@ -1,0 +1,6 @@
+/* Font installati da npm e serviti in locale: nessuna chiamata a servizi esterni. */
+@import '@fontsource-variable/onest/index.css';
+@import '@fontsource-variable/geist-mono/index.css';
+
+@import './styles/tokens.css';
+@import './styles/base.css';

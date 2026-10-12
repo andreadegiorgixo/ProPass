@@ -1,0 +1,136 @@
+<section class="page" aria-labelledby="vault-title">
+  <header class="head">
+    <h1 #title id="vault-title" class="title" tabindex="-1">
+      Le tue password
+      @if (vault.total() !== null) {
+        <span class="count">{{ vault.total() }}</span>
+      }
+    </h1>
+    <!-- Con il vault vuoto l'unico bottone primario è quello dell'invito qui sotto. -->
+    @if (vault.total() !== null && vault.view() !== 'empty') {
+      <button ppButton class="new" type="button" (click)="openCreate()">
+        <pp-icon name="plus" />
+        Nuova password
+      </button>
+    }
+  </header>
+
+  <div class="search" role="search">
+    <label class="sr-only" for="vault-search">Cerca nelle tue password</label>
+    <pp-icon class="search-icon" name="search" [size]="24" />
+    <input
+      #search
+      id="vault-search"
+      class="search-input"
+      type="search"
+      inputmode="search"
+      enterkeyhint="search"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      placeholder="Cerca per nome, username o link"
+      [value]="vault.query()"
+      (input)="vault.setQuery(search.value)"
+      (keydown.escape)="onSearchEscape($event)"
+    />
+    @if (vault.query() !== '') {
+      <button
+        ppIconButton
+        class="search-clear"
+        type="button"
+        label="Svuota ricerca"
+        (click)="clearSearch()"
+      >
+        <pp-icon name="x" />
+      </button>
+    } @else {
+      <kbd class="search-key" aria-hidden="true">/</kbd>
+    }
+  </div>
+
+  <fieldset class="filters">
+    <legend class="sr-only">Cerca in</legend>
+    @for (option of filters; track option.value) {
+      <label class="chip" [class.chip--active]="vault.filter() === option.value">
+        <input
+          class="sr-only"
+          type="radio"
+          name="vault-filter"
+          [value]="option.value"
+          [checked]="vault.filter() === option.value"
+          (change)="vault.setFilter(option.value)"
+        />
+        <span>{{ option.label }}</span>
+      </label>
+    }
+  </fieldset>
+
+  @if (vault.term() !== '' && vault.view() === 'list') {
+    <p class="summary" role="status">
+      {{ vault.items().length }}
+      {{ vault.items().length === 1 ? 'risultato' : 'risultati' }} per «{{ vault.term() }}»
+    </p>
+  }
+
+  @switch (vault.view()) {
+    @case ('loading') {
+      <ul class="rows" aria-hidden="true">
+        @for (n of placeholders; track n) {
+          <li class="skeleton">
+            <span class="skeleton-block skeleton-mono"></span>
+            <span class="skeleton-text">
+              <span class="skeleton-block skeleton-line"></span>
+              <span class="skeleton-block skeleton-line skeleton-line--short"></span>
+            </span>
+          </li>
+        }
+      </ul>
+      <p class="sr-only" role="status">Caricamento delle password</p>
+    }
+
+    @case ('error') {
+      <div class="state" role="alert">
+        <h2 class="state-title">Non riusciamo a caricare le tue password</h2>
+        <p class="state-text">{{ vault.errorMessage() }}</p>
+        <button ppButton variant="secondary" type="button" (click)="vault.reload()">Riprova</button>
+      </div>
+    }
+
+    @case ('empty') {
+      <div class="state">
+        <h2 class="state-title">Non hai ancora password salvate</h2>
+        <p class="state-text">Aggiungi la prima per ritrovarla qui.</p>
+        <button ppButton type="button" (click)="openCreate()">
+          <pp-icon name="plus" />
+          Nuova password
+        </button>
+      </div>
+    }
+
+    @case ('no-results') {
+      <div class="state">
+        <h2 class="state-title">Nessuna password trovata per «{{ vault.term() }}»</h2>
+        <p class="state-text">Controlla come l'hai scritto o cambia il filtro.</p>
+        <button ppButton variant="secondary" type="button" (click)="clearSearch()">
+          Svuota ricerca
+        </button>
+      </div>
+    }
+
+    @default {
+      <ul class="rows" [attr.aria-busy]="vault.busy()" [class.rows--busy]="vault.busy()">
+        @for (item of vault.items(); track item.id) {
+          <li>
+            <pp-password-row
+              [item]="item"
+              [selected]="editingId() === item.id"
+              (copy)="copy($event)"
+              (edit)="openEdit($event)"
+              (remove)="remove($event)"
+            />
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

@@ -1,0 +1,31 @@
+/* Stili condivisi dai moduli di accesso e registrazione. */
+
+:host {
+  display: block;
+}
+
+.title {
+  font-size: var(--text-28);
+}
+
+.notice {
+  display: flex;
+  margin-top: var(--space-5);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+.submit {
+  width: 100%;
+  margin-top: var(--space-1);
+}
+
+.switch {
+  margin-top: var(--space-6);
+  color: var(--color-text-muted);
+}

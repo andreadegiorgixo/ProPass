@@ -1,0 +1,243 @@
+/* Reset, basi tipografiche e stili condivisi da campi, menu e finestre. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-16);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+ul,
+ol,
+fieldset {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+fieldset {
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: var(--weight-title);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+}
+
+a {
+  color: var(--color-primary);
+  text-underline-offset: 0.2em;
+}
+
+@media (hover: hover) {
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-primary-tint);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Campi di testo (direttiva ppInput) ---- */
+
+.pp-input {
+  display: block;
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 var(--space-3);
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-control);
+  font-size: var(--text-16);
+  line-height: 1.4;
+  transition: border-color var(--motion-fast);
+}
+
+textarea.pp-input {
+  min-height: 6.5rem;
+  padding: var(--space-3);
+  resize: vertical;
+}
+
+.pp-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .pp-input:hover:not(:disabled) {
+    border-color: var(--color-text);
+  }
+}
+
+.pp-input:focus-visible {
+  border-color: var(--color-primary);
+}
+
+.pp-input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+.pp-input:disabled {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* ---- Menu (CDK menu: renderizzato in un overlay, quindi stili globali) ---- */
+
+.pp-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 11rem;
+  padding: var(--space-1);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-floating);
+}
+
+.pp-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--control-height);
+  padding: 0 var(--space-3);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--color-text);
+  font-size: var(--text-16);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pp-menu-item:focus-visible {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+
+@media (hover: hover) {
+  .pp-menu-item:hover {
+    background: var(--color-surface-muted);
+    color: var(--color-text);
+  }
+}
+
+.pp-menu-item:focus-visible {
+  outline-offset: -2px;
+}
+
+.pp-menu-item.pp-menu-item--danger,
+.pp-menu-item.pp-menu-item--danger:hover,
+.pp-menu-item.pp-menu-item--danger:focus-visible {
+  color: var(--color-danger);
+}
+
+/* ---- Finestre e pannello laterale (CDK dialog) ---- */
+
+.cdk-overlay-dark-backdrop,
+.pp-backdrop {
+  background: var(--color-scrim);
+}
+
+.pp-dialog {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-floating);
+}
+
+.pp-side-panel {
+  background: var(--color-bg);
+  border-left: 1px solid var(--color-border);
+  box-shadow: var(--shadow-floating);
+}
+
+.cdk-dialog-container {
+  outline: none;
+}
+
+/* ---- Movimento ridotto ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

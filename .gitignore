@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Segreti locali: mai nel repository (restano versionati solo i .env.example)
+.env
+.env.*
+!.env.example
+
+# Impostazioni locali dell'editor nella radice
+/.vscode/
+.idea/
+
+# Build e dipendenze (si rigenerano con mvnw / npm)
+target/
+node_modules/
+.angular/
+dist/
+
+# Cartella di build rimasta fuori posto
+/pass/
