@@ -29,6 +29,7 @@ public class PasswordService {
     private final PasswordRepository passwordRepository;
     private final AccountRepository accountRepository;
     private final PasswordMapper passwordMapper;
+    private final CifraturaService cifraturaService;
 
     // ---------------------- SAVE (SALVA LA SINGOLA PASSWORD) ----------------------
 
@@ -40,17 +41,18 @@ public class PasswordService {
 
         // Proprietario e data di creazione li decide il server, non il client.
         Password password = passwordMapper.toEntity(passwordDTO);
+        password.setPassword(cifraturaService.cifra(passwordDTO.getPassword()));
         password.setIdAccount(account);
         password.setCreazionePassword(LocalDate.now());
 
         Password savedPassword = passwordRepository.save(password);
-        return passwordMapper.toDTO(savedPassword);
+        return toDTOInChiaro(savedPassword);
     }
 
     // ---------------------- GET (OTTENERE TUTTE LE PASSWORD DELL'ACCOUNT, ORDINATE PER NOME) ----------------------
 
     public List<PasswordDTO> getAllPasswords(Long accountId) {
-        return passwordMapper.toDTOList(passwordRepository.findByIdAccountIdOrderByNomePasswordAsc(accountId));
+        return toDTOListInChiaro(passwordRepository.findByIdAccountIdOrderByNomePasswordAsc(accountId));
     }
 
     // ---------------------- GET (OTTENERE LA SINGOLA PASSWORD) ----------------------
@@ -58,7 +60,7 @@ public class PasswordService {
     public PasswordDTO getPasswordById(Long accountId, Long id) {
         Password password = passwordRepository.findByIdAndIdAccountId(id, accountId)
                 .orElseThrow(() -> new PasswordNonTrovataTramiteIdException("Password non trovata con l'id: " + id));
-        return passwordMapper.toDTO(password);
+        return toDTOInChiaro(password);
     }
 
     // ---------------------- DELETE (ELIMINA LA SINGOLA PASSWORD) ----------------------
@@ -79,13 +81,13 @@ public class PasswordService {
 
         // creazionePassword e idAccount non si toccano: restano quelli del salvataggio.
         existingPassword.setNomePassword(passwordDTO.getNomePassword());
-        existingPassword.setPassword(passwordDTO.getPassword());
+        existingPassword.setPassword(cifraturaService.cifra(passwordDTO.getPassword()));
         existingPassword.setLink(passwordDTO.getLink());
         existingPassword.setUsername(passwordDTO.getUsername());
         existingPassword.setNote(passwordDTO.getNote());
 
         Password updatedPassword = passwordRepository.save(existingPassword);
-        return passwordMapper.toDTO(updatedPassword);
+        return toDTOInChiaro(updatedPassword);
     }
 
     // ---------------------- GET (OTTENERE LE PASSWORD PER LINK) ----------------------
@@ -95,7 +97,7 @@ public class PasswordService {
         if (passwords.isEmpty()) {
             throw new PasswordNonTrovataTramiteLinkException("Password non trovata con il link: " + link);
         }
-        return passwordMapper.toDTOList(passwords);
+        return toDTOListInChiaro(passwords);
     }
 
     // ---------------------- GET (OTTENERE LE PASSWORD PER USERNAME) ----------------------
@@ -105,7 +107,7 @@ public class PasswordService {
         if (passwords.isEmpty()) {
             throw new PasswordNonTrovataTramiteUsernameException("Password non trovata con lo username: " + username);
         }
-        return passwordMapper.toDTOList(passwords);
+        return toDTOListInChiaro(passwords);
     }
 
     // ---------------------- GET (OTTENERE LE PASSWORD PER NOME PASSWORD) ----------------------
@@ -115,7 +117,20 @@ public class PasswordService {
         if (passwords.isEmpty()) {
             throw new PasswordNonTrovataTramiteNomePassword("Password non trovata con il nome della password: " + nomePassword);
         }
-        return passwordMapper.toDTOList(passwords);
+        return toDTOListInChiaro(passwords);
+    }
+
+    // ---------------------- MAPPING (ENTITY -> DTO CON PASSWORD IN CHIARO) ----------------------
+
+    private PasswordDTO toDTOInChiaro(Password password) {
+        PasswordDTO dto = passwordMapper.toDTO(password);
+        // Si decifra sul DTO, mai sull'entity: altrimenti si rischia di riscrivere in chiaro nel DB.
+        dto.setPassword(cifraturaService.decifra(password.getPassword()));
+        return dto;
+    }
+
+    private List<PasswordDTO> toDTOListInChiaro(List<Password> passwords) {
+        return passwords.stream().map(this::toDTOInChiaro).toList();
     }
 
     // ---------------------- CHECK (CAMPI OBBLIGATORI, LE NOTE SONO FACOLTATIVE) ----------------------
