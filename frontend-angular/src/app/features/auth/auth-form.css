@@ -8,6 +8,12 @@
   font-size: var(--text-28);
 }
 
+@media (min-width: 56rem) {
+  .title {
+    font-size: var(--text-40);
+  }
+}
+
 .notice {
   display: flex;
   margin-top: var(--space-5);
